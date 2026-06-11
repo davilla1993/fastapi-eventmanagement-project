@@ -1,0 +1,57 @@
+# ── Environnements virtuels ───────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.env
+!.env.example
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+wheels/
+*.whl
+MANIFEST
+
+# ── Qualité / outillage ───────────────────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.hypothesis/
+
+# ── Bases de données locales ──────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+*.log
+
+# ── Distribution / packaging ─────────────────────────────────────────────────
+pip-wheel-metadata/
+.eggs/
+
+# ── Alembic ───────────────────────────────────────────────────────────────────
+# Les versions de migration sont versionnées ; on ignore uniquement les fichiers générés
+alembic/versions/__pycache__/
