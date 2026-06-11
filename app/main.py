@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.modules.iam.api.controllers.auth_controller import router as auth_router
 from app.settings import settings
 from app.shared.exceptions import AppException, app_exception_handler
 
@@ -21,6 +22,8 @@ app.add_middleware(
 )
 
 app.add_exception_handler(AppException, app_exception_handler)  # type: ignore[arg-type]
+
+app.include_router(auth_router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

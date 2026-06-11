@@ -105,7 +105,7 @@ Pagination réutilisable.
 
 # PHASE 3 — TYPES PERSONNALISÉS
 
-## - [ ] Tâche 7
+## - [x] Tâche 7
 
 Implémenter :
 
@@ -121,7 +121,7 @@ Tous les validateurs fonctionnent.
 
 ---
 
-## - [ ] Tâche 8
+## - [x] Tâche 8
 
 Créer les serializers Pydantic v2.
 
@@ -131,7 +131,7 @@ Sérialisation conforme.
 
 ---
 
-## - [ ] Tâche 9
+## - [x] Tâche 9
 
 Créer les tests unitaires des types.
 
@@ -141,7 +141,7 @@ Critère :
 
 ---
 
-## - [ ] Tâche 10
+## - [x] Tâche 10
 
 Créer les tests Hypothesis.
 
