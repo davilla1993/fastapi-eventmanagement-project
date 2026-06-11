@@ -9,9 +9,11 @@ from app.modules.iam.api.dto.requests.auth_requests import LoginRequest, Registe
 from app.modules.iam.api.dto.responses.auth_responses import TokenResponse, UserResponse
 from app.modules.iam.application.usecases.login_user import LoginUserUseCase
 from app.modules.iam.application.usecases.register_user import RegisterUserUseCase
+from app.modules.iam.domain.exceptions.iam_exceptions import UserNotFoundException
 from app.modules.iam.infrastructure.repositories.sqlalchemy_user_repository import (
     SqlAlchemyUserRepository,
 )
+from app.shared.domain.unit_of_work import UnitOfWork
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -26,8 +28,7 @@ async def register(
     body: RegisterRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> UserResponse:
-    repo = SqlAlchemyUserRepository(db)
-    return await RegisterUserUseCase(repo).execute(body)
+    return await RegisterUserUseCase(SqlAlchemyUserRepository(db), UnitOfWork(db)).execute(body)
 
 
 @router.post(
@@ -39,8 +40,7 @@ async def login(
     body: LoginRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> TokenResponse:
-    repo = SqlAlchemyUserRepository(db)
-    return await LoginUserUseCase(repo).execute(body)
+    return await LoginUserUseCase(SqlAlchemyUserRepository(db)).execute(body)
 
 
 @router.get(
@@ -52,8 +52,6 @@ async def me(
     current_user: Annotated[CurrentUser, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> UserResponse:
-    from app.modules.iam.domain.exceptions.iam_exceptions import UserNotFoundException
-
     repo = SqlAlchemyUserRepository(db)
     user = await repo.find_by_public_id(current_user.public_id)
     if not user:
