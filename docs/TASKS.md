@@ -10,7 +10,7 @@ Le projet doit respecter l'architecture DDD Lite définie dans CLAUDE.md et PROJ
 
 # PHASE 1 — INITIALISATION
 
-## - [ ] Tâche 1
+## - [x] Tâche 1
 
 Créer la structure du projet.
 
@@ -28,7 +28,7 @@ Le projet démarre correctement.
 
 ---
 
-## - [ ] Tâche 2
+## - [x] Tâche 2
 
 Configurer :
 
@@ -44,7 +44,7 @@ Connexion à PostgreSQL opérationnelle.
 
 ---
 
-## - [ ] Tâche 3
+## - [x] Tâche 3
 
 Configurer :
 
@@ -61,7 +61,7 @@ Pipeline qualité fonctionnel.
 
 # PHASE 2 — COUCHE SHARED
 
-## - [ ] Tâche 4
+## - [x] Tâche 4
 
 Créer BaseEntity.
 
@@ -83,7 +83,7 @@ Toutes les entités héritent de BaseEntity.
 
 ---
 
-## - [ ] Tâche 5
+## - [x] Tâche 5
 
 Créer les exceptions métier communes.
 
@@ -93,7 +93,7 @@ Exceptions centralisées.
 
 ---
 
-## - [ ] Tâche 6
+## - [x] Tâche 6
 
 Créer le système de pagination.
 
