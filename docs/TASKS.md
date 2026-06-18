@@ -400,7 +400,7 @@ Documentation complète.
 
 # PHASE 11 — TESTS
 
-## - [ ] Tâche 31
+## - [x] Tâche 31
 
 Tests unitaires.
 
@@ -410,7 +410,7 @@ Couverture élevée.
 
 ---
 
-## - [ ] Tâche 32
+## - [x] Tâche 32
 
 Tests d'intégration.
 
@@ -420,7 +420,7 @@ Endpoints testés.
 
 ---
 
-## - [ ] Tâche 33
+## - [x] Tâche 33
 
 Tests Hypothesis.
 
