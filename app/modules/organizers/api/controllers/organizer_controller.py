@@ -42,7 +42,12 @@ router = APIRouter(prefix="/organizers", tags=["Organizers"])
 
 
 @router.post(
-    "", response_model=OrganizerReadDetail, status_code=status.HTTP_201_CREATED
+    "",
+    response_model=OrganizerReadDetail,
+    status_code=status.HTTP_201_CREATED,
+    summary="Créer un organisateur",
+    description="Crée un nouvel organisateur lié au compte de l'utilisateur authentifié. Réservé aux rôles ORGANIZER et ADMIN.",  # noqa: E501
+    response_description="Organisateur créé avec succès.",
 )
 async def create_organizer(
     body: OrganizerCreate,
@@ -54,7 +59,13 @@ async def create_organizer(
     return await CreateOrganizerUseCase(repo, uow).execute(body, current_user.public_id)
 
 
-@router.get("", response_model=PaginatedResponse[OrganizerRead])
+@router.get(
+    "",
+    response_model=PaginatedResponse[OrganizerRead],
+    summary="Lister les organisateurs",
+    description="Retourne la liste paginée des organisateurs actifs. Accessible publiquement.",
+    response_description="Liste paginée d'organisateurs.",
+)
 async def list_organizers(
     pagination: PaginationParams = Depends(),
     db: AsyncSession = Depends(get_db),
@@ -63,7 +74,13 @@ async def list_organizers(
     return await ListOrganizersUseCase(repo).execute(pagination)
 
 
-@router.get("/{public_id}", response_model=OrganizerReadDetail)
+@router.get(
+    "/{public_id}",
+    response_model=OrganizerReadDetail,
+    summary="Obtenir un organisateur",
+    description="Retourne le détail complet d'un organisateur par son identifiant public (UUID).",
+    response_description="Détail de l'organisateur.",
+)
 async def get_organizer(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -72,7 +89,13 @@ async def get_organizer(
     return await GetOrganizerUseCase(repo).execute(public_id)
 
 
-@router.patch("/{public_id}", response_model=OrganizerReadDetail)
+@router.patch(
+    "/{public_id}",
+    response_model=OrganizerReadDetail,
+    summary="Mettre à jour un organisateur",
+    description="Met à jour les informations d'un organisateur. Un organisateur ne peut modifier que son propre profil ; les ADMINs peuvent modifier n'importe quel profil.",  # noqa: E501
+    response_description="Organisateur mis à jour.",
+)
 async def update_organizer(
     public_id: UUID,
     body: OrganizerUpdate,
@@ -86,7 +109,13 @@ async def update_organizer(
     )
 
 
-@router.delete("/{public_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{public_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Supprimer un organisateur",
+    description="Suppression logique (soft delete) d'un organisateur. Nécessite d'être authentifié.",
+    response_description="Suppression effectuée (aucun contenu retourné).",
+)
 async def delete_organizer(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),

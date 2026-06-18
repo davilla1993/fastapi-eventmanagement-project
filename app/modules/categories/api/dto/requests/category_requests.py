@@ -6,10 +6,16 @@ from app.shared.types.slug import Slug
 
 
 class CategoryCreate(BaseModel):
-    name: str = Field(min_length=2, max_length=255)
-    slug: Slug
-    description: str | None = Field(default=None, max_length=2000)
-    color: str | None = Field(default=None, description="Couleur hexadécimale (#RRGGBB)")  # noqa: E501
+    name: str = Field(min_length=2, max_length=255, examples=["Jazz"])
+    slug: Slug = Field(examples=["jazz"])
+    description: str | None = Field(
+        default=None,
+        max_length=2000,
+        examples=["Concerts et événements autour du jazz et de ses dérivés."],
+    )
+    color: str | None = Field(  # noqa: E501
+        default=None, description="Couleur hexadécimale (#RRGGBB)", examples=["#F59E0B"]
+    )
 
     @field_validator("color")
     @classmethod
@@ -23,7 +29,9 @@ class CategoryUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=255)
     slug: Slug | None = None
     description: str | None = Field(default=None, max_length=2000)
-    color: str | None = Field(default=None, description="Couleur hexadécimale (#RRGGBB)")  # noqa: E501
+    color: str | None = Field(  # noqa: E501
+        default=None, description="Couleur hexadécimale (#RRGGBB)", examples=["#F59E0B"]
+    )
 
     @field_validator("color")
     @classmethod

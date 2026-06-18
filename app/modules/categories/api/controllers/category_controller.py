@@ -40,7 +40,12 @@ router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
 @router.post(
-    "", response_model=CategoryReadDetail, status_code=status.HTTP_201_CREATED
+    "",
+    response_model=CategoryReadDetail,
+    status_code=status.HTTP_201_CREATED,
+    summary="Créer une catégorie",
+    description="Crée une nouvelle catégorie thématique. **Réservé aux ADMINs.**",
+    response_description="Catégorie créée avec succès.",
 )
 async def create_category(
     body: CategoryCreate,
@@ -52,7 +57,13 @@ async def create_category(
     return await CreateCategoryUseCase(repo, uow).execute(body, current_user.public_id)
 
 
-@router.get("", response_model=PaginatedResponse[CategoryRead])
+@router.get(
+    "",
+    response_model=PaginatedResponse[CategoryRead],
+    summary="Lister les catégories",
+    description="Retourne la liste paginée des catégories. Accessible publiquement.",
+    response_description="Liste paginée de catégories.",
+)
 async def list_categories(
     pagination: PaginationParams = Depends(),
     db: AsyncSession = Depends(get_db),
@@ -61,7 +72,13 @@ async def list_categories(
     return await ListCategoriesUseCase(repo).execute(pagination)
 
 
-@router.get("/{public_id}", response_model=CategoryReadDetail)
+@router.get(
+    "/{public_id}",
+    response_model=CategoryReadDetail,
+    summary="Obtenir une catégorie",
+    description="Retourne le détail d'une catégorie par son identifiant public (UUID).",
+    response_description="Détail de la catégorie.",
+)
 async def get_category(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -70,7 +87,13 @@ async def get_category(
     return await GetCategoryUseCase(repo).execute(public_id)
 
 
-@router.patch("/{public_id}", response_model=CategoryReadDetail)
+@router.patch(
+    "/{public_id}",
+    response_model=CategoryReadDetail,
+    summary="Mettre à jour une catégorie",
+    description="Met à jour une catégorie existante. **Réservé aux ADMINs.**",
+    response_description="Catégorie mise à jour.",
+)
 async def update_category(
     public_id: UUID,
     body: CategoryUpdate,
@@ -84,7 +107,13 @@ async def update_category(
     )
 
 
-@router.delete("/{public_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{public_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Supprimer une catégorie",
+    description="Suppression logique (soft delete) d'une catégorie. Nécessite d'être authentifié.",
+    response_description="Suppression effectuée (aucun contenu retourné).",
+)
 async def delete_category(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),

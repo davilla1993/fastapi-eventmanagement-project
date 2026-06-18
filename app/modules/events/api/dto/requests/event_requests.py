@@ -10,21 +10,34 @@ from app.shared.types.url_image import URLImage
 
 
 class _EventBase(BaseModel):
-    title: str = Field(min_length=2, max_length=255)
-    slug: Slug
-    description: str | None = Field(default=None, max_length=5000)
-    status: Literal["draft", "published", "cancelled", "sold_out"] = "draft"
-    start_at: datetime
-    end_at: datetime
-    venue_public_id: UUID
-    organizer_public_id: UUID
-    category_public_id: UUID | None = None
-    city: str = Field(min_length=1, max_length=100)
-    price: Decimal | None = Field(default=None, ge=0)
-    capacity: int | None = Field(default=None, ge=1)
-    image_url: URLImage | None = None
-    tags: str | None = Field(  # noqa: E501
-        default=None, max_length=500, description="Tags séparés par des virgules"
+    title: str = Field(min_length=2, max_length=255, examples=["Jazz Festival Paris 2025"])  # noqa: E501
+    slug: Slug = Field(examples=["jazz-festival-paris-2025"])
+    description: str | None = Field(
+        default=None,
+        max_length=5000,
+        examples=["Le plus grand festival de jazz de la capitale."],
+    )
+    status: Literal["draft", "published", "cancelled", "sold_out"] = Field(
+        default="draft", examples=["published"]
+    )
+    start_at: datetime = Field(examples=["2025-07-14T20:00:00+02:00"])
+    end_at: datetime = Field(examples=["2025-07-14T23:30:00+02:00"])
+    venue_public_id: UUID = Field(examples=["550e8400-e29b-41d4-a716-446655440000"])
+    organizer_public_id: UUID = Field(examples=["550e8400-e29b-41d4-a716-446655440001"])
+    category_public_id: UUID | None = Field(
+        default=None, examples=["550e8400-e29b-41d4-a716-446655440002"]
+    )
+    city: str = Field(min_length=1, max_length=100, examples=["Paris"])
+    price: Decimal | None = Field(default=None, ge=0, examples=["45.00"])
+    capacity: int | None = Field(default=None, ge=1, examples=[500])
+    image_url: URLImage | None = Field(
+        default=None, examples=["https://example.com/jazz-festival.jpg"]
+    )
+    tags: str | None = Field(
+        default=None,
+        max_length=500,
+        description="Tags séparés par des virgules",
+        examples=["jazz,bebop,improvisation"],
     )
 
     @model_validator(mode="after")
@@ -36,20 +49,24 @@ class _EventBase(BaseModel):
 
 class ConcertCreate(_EventBase):
     event_type: Literal["concert"] = "concert"
-    artist: str = Field(min_length=1, max_length=255)
-    genre: str | None = Field(default=None, max_length=100)
+    artist: str = Field(min_length=1, max_length=255, examples=["Ibrahim Maalouf"])
+    genre: str | None = Field(default=None, max_length=100, examples=["Jazz contemporain"])  # noqa: E501
 
 
 class TheatreCreate(_EventBase):
     event_type: Literal["theatre"] = "theatre"
-    director: str | None = Field(default=None, max_length=255)
-    cast_members: str | None = Field(default=None, max_length=2000)
+    director: str | None = Field(default=None, max_length=255, examples=["Ariane Mnouchkine"])  # noqa: E501
+    cast_members: str | None = Field(
+        default=None, max_length=2000, examples=["Sophie Marceau, Vincent Cassel"]
+    )
 
 
 class ConferenceCreate(_EventBase):
     event_type: Literal["conference"] = "conference"
-    speaker: str = Field(min_length=1, max_length=255)
-    topic: str | None = Field(default=None, max_length=255)
+    speaker: str = Field(min_length=1, max_length=255, examples=["Pr. Jean Dupont"])
+    topic: str | None = Field(
+        default=None, max_length=255, examples=["Intelligence Artificielle et Créativité"]  # noqa: E501
+    )
 
 
 EventCreate = Annotated[

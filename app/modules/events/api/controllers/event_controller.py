@@ -49,7 +49,13 @@ _EventDetailUnion = ConcertReadDetail | TheatreReadDetail | ConferenceReadDetail
 _EventReadUnion = ConcertRead | TheatreRead | ConferenceRead
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    summary="Créer un événement",
+    description="Crée un événement culturel (Concert, Théâtre ou Conférence). Le champ `event_type` détermine le schéma. Réservé aux rôles ORGANIZER et ADMIN.",  # noqa: E501
+    response_description="Événement créé — détail complet incluant les champs spécifiques au type.",
+)
 async def create_event(
     body: _EventCreateBody,
     db: AsyncSession = Depends(get_db),
@@ -63,7 +69,12 @@ async def create_event(
     )
 
 
-@router.get("")
+@router.get(
+    "",
+    summary="Lister les événements",
+    description="Liste paginée des événements avec filtres avancés : ville, type, catégorie, organisateur, plage de dates, prix maximum, tags. Tri par `start_at`, `price` ou `title`.",  # noqa: E501
+    response_description="Liste paginée d'événements (Concert, Théâtre ou Conférence).",
+)
 async def list_events(
     pagination: PaginationParams = Depends(),
     city: str | None = Query(default=None),
@@ -94,7 +105,12 @@ async def list_events(
     return await ListEventsUseCase(repo).execute(pagination, filters)
 
 
-@router.get("/{public_id}")
+@router.get(
+    "/{public_id}",
+    summary="Obtenir un événement",
+    description="Retourne le détail complet d'un événement par son UUID. La réponse inclut les champs spécifiques au type (Concert, Théâtre ou Conférence).",  # noqa: E501
+    response_description="Détail de l'événement avec champs discriminés.",
+)
 async def get_event(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -103,7 +119,12 @@ async def get_event(
     return await GetEventUseCase(repo).execute(public_id)
 
 
-@router.patch("/{public_id}")
+@router.patch(
+    "/{public_id}",
+    summary="Mettre à jour un événement",
+    description="Met à jour partiellement un événement existant. Tous les champs sont optionnels. Réservé aux rôles ORGANIZER et ADMIN.",  # noqa: E501
+    response_description="Événement mis à jour.",
+)
 async def update_event(
     public_id: UUID,
     body: EventUpdate,
@@ -118,7 +139,13 @@ async def update_event(
     )
 
 
-@router.delete("/{public_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{public_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Supprimer un événement",
+    description="Suppression logique (soft delete) d'un événement. L'opération est auditée. Nécessite d'être authentifié.",  # noqa: E501
+    response_description="Suppression effectuée (aucun contenu retourné).",
+)
 async def delete_event(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),

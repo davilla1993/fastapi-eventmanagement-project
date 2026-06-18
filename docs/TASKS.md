@@ -378,7 +378,7 @@ Traçabilité complète.
 
 # PHASE 10 — DOCUMENTATION
 
-## - [ ] Tâche 29
+## - [x] Tâche 29
 
 Ajouter des exemples OpenAPI.
 
@@ -388,7 +388,7 @@ Swagger riche.
 
 ---
 
-## - [ ] Tâche 30
+## - [x] Tâche 30
 
 Documenter tous les endpoints.
 

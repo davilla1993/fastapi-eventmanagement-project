@@ -28,7 +28,14 @@ from app.shared.pagination.schemas import PaginatedResponse, PaginationParams
 router = APIRouter(prefix="/venues", tags=["Venues"])
 
 
-@router.post("", response_model=VenueReadDetail, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=VenueReadDetail,
+    status_code=status.HTTP_201_CREATED,
+    summary="Créer une salle",
+    description="Crée une nouvelle salle ou lieu d'accueil. Réservé aux rôles ORGANIZER et ADMIN.",
+    response_description="Salle créée avec succès.",
+)
 async def create_venue(
     body: VenueCreate,
     db: AsyncSession = Depends(get_db),
@@ -39,17 +46,29 @@ async def create_venue(
     return await CreateVenueUseCase(repo, uow).execute(body, current_user.public_id)
 
 
-@router.get("", response_model=PaginatedResponse[VenueRead])
+@router.get(
+    "",
+    response_model=PaginatedResponse[VenueRead],
+    summary="Lister les salles",
+    description="Retourne la liste paginée des salles. Filtrable par ville (recherche partielle insensible à la casse).",  # noqa: E501
+    response_description="Liste paginée de salles.",
+)
 async def list_venues(
     pagination: PaginationParams = Depends(),
-    city: str | None = Query(default=None, description="Filtrer par ville"),
+    city: str | None = Query(default=None, description="Filtrer par ville (recherche partielle)"),
     db: AsyncSession = Depends(get_db),
 ) -> PaginatedResponse[VenueRead]:
     repo = SqlAlchemyVenueRepository(db)
     return await ListVenuesUseCase(repo).execute(pagination, city=city)
 
 
-@router.get("/{public_id}", response_model=VenueReadDetail)
+@router.get(
+    "/{public_id}",
+    response_model=VenueReadDetail,
+    summary="Obtenir une salle",
+    description="Retourne le détail complet d'une salle par son identifiant public (UUID).",
+    response_description="Détail de la salle.",
+)
 async def get_venue(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),
@@ -58,7 +77,13 @@ async def get_venue(
     return await GetVenueUseCase(repo).execute(public_id)
 
 
-@router.patch("/{public_id}", response_model=VenueReadDetail)
+@router.patch(
+    "/{public_id}",
+    response_model=VenueReadDetail,
+    summary="Mettre à jour une salle",
+    description="Met à jour les informations d'une salle existante. Réservé aux rôles ORGANIZER et ADMIN.",  # noqa: E501
+    response_description="Salle mise à jour.",
+)
 async def update_venue(
     public_id: UUID,
     body: VenueUpdate,
@@ -72,7 +97,13 @@ async def update_venue(
     )
 
 
-@router.delete("/{public_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{public_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Supprimer une salle",
+    description="Suppression logique (soft delete) d'une salle. Nécessite d'être authentifié.",
+    response_description="Suppression effectuée (aucun contenu retourné).",
+)
 async def delete_venue(
     public_id: UUID,
     db: AsyncSession = Depends(get_db),
