@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.events.api.dto.requests.event_requests import (
     ConcertCreate,
     ConferenceCreate,
@@ -26,10 +27,14 @@ _EventDetailUnion = ConcertReadDetail | TheatreReadDetail | ConferenceReadDetail
 
 class CreateEventUseCase:
     def __init__(
-        self, repository: AbstractEventRepository, uow: UnitOfWork
+        self,
+        repository: AbstractEventRepository,
+        uow: UnitOfWork,
+        audit: AuditService,
     ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self, request: _EventCreateUnion, actor_public_id: UUID
@@ -45,5 +50,12 @@ class CreateEventUseCase:
 
         event = Event(**data)
         saved = await self._repository.save(event)
+        await self._audit.log(
+            entity_type="event",
+            entity_public_id=saved.public_id,
+            action="created",
+            actor_public_id=actor_public_id,
+            details={"title": saved.title, "event_type": saved.event_type},
+        )
         await self._uow.commit()
         return EventMapper.to_detail(saved)

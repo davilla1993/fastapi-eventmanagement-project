@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.events.api.dto.requests.event_requests import EventUpdate
 from app.modules.events.api.dto.responses.event_responses import (
     ConcertReadDetail,
@@ -27,10 +28,14 @@ _UPDATABLE_FIELDS = [
 
 class UpdateEventUseCase:
     def __init__(
-        self, repository: AbstractEventRepository, uow: UnitOfWork
+        self,
+        repository: AbstractEventRepository,
+        uow: UnitOfWork,
+        audit: AuditService,
     ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self, public_id: UUID, request: EventUpdate, actor_public_id: UUID
@@ -54,5 +59,12 @@ class UpdateEventUseCase:
 
         event.updated_by = actor_public_id
         saved = await self._repository.save(event)
+        await self._audit.log(
+            entity_type="event",
+            entity_public_id=saved.public_id,
+            action="updated",
+            actor_public_id=actor_public_id,
+            details={"title": saved.title, "status": saved.status},
+        )
         await self._uow.commit()
         return EventMapper.to_detail(saved)

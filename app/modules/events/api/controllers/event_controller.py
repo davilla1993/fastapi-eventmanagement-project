@@ -6,6 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.infrastructure.database.session import get_db
 from app.infrastructure.security.dependencies import (
     CurrentUser,
@@ -56,7 +57,10 @@ async def create_event(
 ) -> _EventDetailUnion:
     repo = SqlAlchemyEventRepository(db)
     uow = UnitOfWork(db)
-    return await CreateEventUseCase(repo, uow).execute(body, current_user.public_id)
+    audit = AuditService(db)
+    return await CreateEventUseCase(repo, uow, audit).execute(
+        body, current_user.public_id
+    )
 
 
 @router.get("")
@@ -108,7 +112,8 @@ async def update_event(
 ) -> _EventDetailUnion:
     repo = SqlAlchemyEventRepository(db)
     uow = UnitOfWork(db)
-    return await UpdateEventUseCase(repo, uow).execute(
+    audit = AuditService(db)
+    return await UpdateEventUseCase(repo, uow, audit).execute(
         public_id, body, current_user.public_id
     )
 
@@ -121,4 +126,7 @@ async def delete_event(
 ) -> None:
     repo = SqlAlchemyEventRepository(db)
     uow = UnitOfWork(db)
-    await DeleteEventUseCase(repo, uow).execute(public_id, current_user.public_id)
+    audit = AuditService(db)
+    await DeleteEventUseCase(repo, uow, audit).execute(
+        public_id, current_user.public_id
+    )

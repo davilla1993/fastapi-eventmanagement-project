@@ -1,17 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.modules.iam.api.controllers.auth_controller import router as auth_router
-from app.modules.organizers.api.controllers.organizer_controller import (
-    router as organizer_router,
-)
+from app.infrastructure.logging.request_middleware import RequestLoggingMiddleware
+from app.infrastructure.logging.setup import setup_logging
 from app.modules.categories.api.controllers.category_controller import (
     router as category_router,
 )
 from app.modules.events.api.controllers.event_controller import router as event_router
+from app.modules.iam.api.controllers.auth_controller import router as auth_router
+from app.modules.organizers.api.controllers.organizer_controller import (
+    router as organizer_router,
+)
 from app.modules.venues.api.controllers.venue_controller import router as venue_router
 from app.settings import settings
 from app.shared.exceptions import AppException, app_exception_handler
+
+setup_logging(level=settings.log_level if hasattr(settings, "log_level") else "INFO")
 
 app = FastAPI(
     title=settings.app_name,
@@ -21,6 +25,7 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_hosts,

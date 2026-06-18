@@ -356,7 +356,7 @@ Pagination sur les listes.
 
 # PHASE 9 — AUDIT ET LOGS
 
-## - [ ] Tâche 27
+## - [x] Tâche 27
 
 Mettre en place les logs structurés.
 
@@ -366,7 +366,7 @@ Logs JSON.
 
 ---
 
-## - [ ] Tâche 28
+## - [x] Tâche 28
 
 Mettre en place l'audit.
 
