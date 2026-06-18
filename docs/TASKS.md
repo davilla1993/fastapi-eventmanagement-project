@@ -153,7 +153,7 @@ Tous les types couverts.
 
 # PHASE 4 — AUTHENTIFICATION
 
-## - [ ] Tâche 11
+## - [x] Tâche 11
 
 Mettre en place JWT.
 
@@ -163,7 +163,7 @@ Connexion fonctionnelle.
 
 ---
 
-## - [ ] Tâche 12
+## - [x] Tâche 12
 
 Créer les rôles :
 
@@ -179,7 +179,7 @@ RBAC fonctionnel.
 
 # PHASE 5 — MODULE ORGANIZERS
 
-## - [ ] Tâche 13
+## - [x] Tâche 13
 
 Créer l'entité Organizer.
 
@@ -189,7 +189,7 @@ Migration générée.
 
 ---
 
-## - [ ] Tâche 14
+## - [x] Tâche 14
 
 Créer :
 
@@ -205,7 +205,7 @@ CRUD complet.
 
 # PHASE 6 — MODULE VENUES
 
-## - [ ] Tâche 15
+## - [x] Tâche 15
 
 Créer l'entité Venue.
 
@@ -215,7 +215,7 @@ Migration générée.
 
 ---
 
-## - [ ] Tâche 16
+## - [x] Tâche 16
 
 Créer :
 
