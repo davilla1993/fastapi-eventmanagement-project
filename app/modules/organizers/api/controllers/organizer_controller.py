@@ -3,6 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.infrastructure.database.session import get_db
 from app.infrastructure.security.dependencies import (
     CurrentUser,
@@ -56,7 +57,8 @@ async def create_organizer(
 ) -> OrganizerReadDetail:
     repo = SqlAlchemyOrganizerRepository(db)
     uow = UnitOfWork(db)
-    return await CreateOrganizerUseCase(repo, uow).execute(body, current_user.public_id)
+    audit = AuditService(db)
+    return await CreateOrganizerUseCase(repo, uow, audit).execute(body, current_user.public_id)
 
 
 @router.get(
@@ -104,7 +106,8 @@ async def update_organizer(
 ) -> OrganizerReadDetail:
     repo = SqlAlchemyOrganizerRepository(db)
     uow = UnitOfWork(db)
-    return await UpdateOrganizerUseCase(repo, uow).execute(
+    audit = AuditService(db)
+    return await UpdateOrganizerUseCase(repo, uow, audit).execute(
         public_id, body, current_user.public_id, current_user.role
     )
 
@@ -123,4 +126,5 @@ async def delete_organizer(
 ) -> None:
     repo = SqlAlchemyOrganizerRepository(db)
     uow = UnitOfWork(db)
-    await DeleteOrganizerUseCase(repo, uow).execute(public_id, current_user.public_id)
+    audit = AuditService(db)
+    await DeleteOrganizerUseCase(repo, uow, audit).execute(public_id, current_user.public_id)

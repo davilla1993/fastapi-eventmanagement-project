@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.iam.domain.entities.user import UserRole
 from app.modules.organizers.api.dto.requests.organizer_requests import OrganizerUpdate
 from app.modules.organizers.api.dto.responses.organizer_responses import (
@@ -19,10 +20,14 @@ from app.shared.exceptions.base import ForbiddenException
 
 class UpdateOrganizerUseCase:
     def __init__(
-        self, repository: AbstractOrganizerRepository, uow: UnitOfWork
+        self,
+        repository: AbstractOrganizerRepository,
+        uow: UnitOfWork,
+        audit: AuditService,
     ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self,
@@ -54,5 +59,12 @@ class UpdateOrganizerUseCase:
 
         organizer.updated_by = actor_public_id
         saved = await self._repository.save(organizer)
+        await self._audit.log(
+            entity_type="organizer",
+            entity_public_id=saved.public_id,
+            action="updated",
+            actor_public_id=actor_public_id,
+            details={"name": saved.name, "email": saved.email},
+        )
         await self._uow.commit()
         return OrganizerMapper.to_detail(saved)

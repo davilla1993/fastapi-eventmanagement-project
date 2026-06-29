@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.venues.api.dto.requests.venue_requests import VenueCreate
 from app.modules.venues.api.dto.responses.venue_responses import VenueReadDetail
 from app.modules.venues.application.mappers.venue_mapper import VenueMapper
@@ -14,9 +15,12 @@ from app.shared.domain.unit_of_work import UnitOfWork
 
 
 class CreateVenueUseCase:
-    def __init__(self, repository: AbstractVenueRepository, uow: UnitOfWork) -> None:
+    def __init__(
+        self, repository: AbstractVenueRepository, uow: UnitOfWork, audit: AuditService
+    ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self, request: VenueCreate, actor_public_id: UUID
@@ -38,5 +42,12 @@ class CreateVenueUseCase:
             updated_by=actor_public_id,
         )
         saved = await self._repository.save(venue)
+        await self._audit.log(
+            entity_type="venue",
+            entity_public_id=saved.public_id,
+            action="created",
+            actor_public_id=actor_public_id,
+            details={"name": saved.name, "city": saved.city},
+        )
         await self._uow.commit()
         return VenueMapper.to_detail(saved)

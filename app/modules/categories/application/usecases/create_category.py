@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.categories.api.dto.requests.category_requests import CategoryCreate
 from app.modules.categories.api.dto.responses.category_responses import (
     CategoryReadDetail,
@@ -17,10 +18,14 @@ from app.shared.domain.unit_of_work import UnitOfWork
 
 class CreateCategoryUseCase:
     def __init__(
-        self, repository: AbstractCategoryRepository, uow: UnitOfWork
+        self,
+        repository: AbstractCategoryRepository,
+        uow: UnitOfWork,
+        audit: AuditService,
     ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self, request: CategoryCreate, actor_public_id: UUID
@@ -37,5 +42,12 @@ class CreateCategoryUseCase:
             updated_by=actor_public_id,
         )
         saved = await self._repository.save(category)
+        await self._audit.log(
+            entity_type="category",
+            entity_public_id=saved.public_id,
+            action="created",
+            actor_public_id=actor_public_id,
+            details={"name": saved.name, "slug": saved.slug},
+        )
         await self._uow.commit()
         return CategoryMapper.to_detail(saved)

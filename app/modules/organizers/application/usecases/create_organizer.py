@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.infrastructure.audit.audit_service import AuditService
 from app.modules.organizers.api.dto.requests.organizer_requests import OrganizerCreate
 from app.modules.organizers.api.dto.responses.organizer_responses import (
     OrganizerReadDetail,
@@ -17,10 +18,14 @@ from app.shared.domain.unit_of_work import UnitOfWork
 
 class CreateOrganizerUseCase:
     def __init__(
-        self, repository: AbstractOrganizerRepository, uow: UnitOfWork
+        self,
+        repository: AbstractOrganizerRepository,
+        uow: UnitOfWork,
+        audit: AuditService,
     ) -> None:
         self._repository = repository
         self._uow = uow
+        self._audit = audit
 
     async def execute(
         self, request: OrganizerCreate, actor_public_id: UUID
@@ -39,5 +44,12 @@ class CreateOrganizerUseCase:
             updated_by=actor_public_id,
         )
         saved = await self._repository.save(organizer)
+        await self._audit.log(
+            entity_type="organizer",
+            entity_public_id=saved.public_id,
+            action="created",
+            actor_public_id=actor_public_id,
+            details={"name": saved.name, "email": saved.email},
+        )
         await self._uow.commit()
         return OrganizerMapper.to_detail(saved)

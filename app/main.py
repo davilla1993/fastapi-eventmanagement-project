@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.infrastructure.logging.request_middleware import RequestLoggingMiddleware
 from app.infrastructure.logging.setup import setup_logging
+from app.modules.audit.api.controllers.audit_log_controller import (
+    router as audit_router,
+)
 from app.modules.categories.api.controllers.category_controller import (
     router as category_router,
 )
@@ -75,6 +78,10 @@ _TAGS_METADATA = [
         "description": "Catégories thématiques des événements (réservé ADMIN).",
     },
     {
+        "name": "Audit Logs",
+        "description": "Consultation de l'historique des opérations d'écriture (réservé ADMIN).",
+    },
+    {
         "name": "health",
         "description": "Vérification de l'état du serveur.",
     },
@@ -109,6 +116,7 @@ app.add_middleware(
 app.add_exception_handler(AppException, app_exception_handler)  # type: ignore[arg-type]
 
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(audit_router, prefix="/api/v1")
 app.include_router(organizer_router, prefix="/api/v1")
 app.include_router(venue_router, prefix="/api/v1")
 app.include_router(category_router, prefix="/api/v1")
